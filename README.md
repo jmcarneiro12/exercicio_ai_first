@@ -8,6 +8,7 @@ Site com abas para comparar versões de um jogo da memória feito com **Phaser 3
 hub/index.html            página principal com as abas
 versions/
   v1-memoria/             V1: jogo da memória básico (projeto Vite independente)
+  v2-memoria/             V2: V1 + sons, coringas e condições de derrota
 .github/workflows/        build e deploy automático no GitHub Pages
 ```
 
@@ -16,6 +17,7 @@ versions/
 | Aba | Pasta | Descrição |
 |-----|-------|-----------|
 | V1 · Básica | `versions/v1-memoria` | Grade 4x4, texturas geradas por código, flip com tweens, contador de jogadas |
+| V2 · Sons + Coringa | `versions/v2-memoria` | V1 + efeitos sonoros, par de coringas (3 viradas reiniciam o tabuleiro), derrota com 100 jogadas ou 5 min |
 
 ## Rodar uma versão localmente
 
