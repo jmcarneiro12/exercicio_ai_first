@@ -1,0 +1,51 @@
+name: Deploy no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Compila cada pasta de versions/ e publica em dist/<nome>/
+      - name: Build de todas as versões
+        run: |
+          mkdir -p dist
+          cp hub/index.html dist/index.html
+          for dir in versions/*/; do
+            name=$(basename "$dir")
+            echo "::group::Build $name"
+            (cd "$dir" && npm ci && npm run build)
+            cp -r "$dir/dist" "dist/$name"
+            echo "::endgroup::"
+          done
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

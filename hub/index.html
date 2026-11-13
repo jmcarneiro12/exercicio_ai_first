@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercício AI-first | Jogo da Memória</title>
+    <style>
+      :root { --bg: #111827; --panel: #1d2b3a; --text: #e5e7eb; --muted: #94a3b8; --accent: #3498db; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; }
+      header { padding: 20px 16px 0; max-width: 760px; margin: 0 auto; }
+      h1 { margin: 0 0 4px; font-size: 1.4rem; }
+      p.sub { margin: 0 0 16px; color: var(--muted); }
+      nav { display: flex; gap: 4px; border-bottom: 1px solid #334155; }
+      nav button {
+        background: transparent; color: var(--muted); border: 0; padding: 10px 16px;
+        font: inherit; cursor: pointer; border-bottom: 3px solid transparent;
+      }
+      nav button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+      nav button:disabled { opacity: .4; cursor: not-allowed; }
+      main { max-width: 760px; margin: 0 auto; padding: 16px; }
+      .info { color: var(--muted); font-size: .9rem; margin: 0 0 12px; }
+      iframe { width: 100%; height: 680px; border: 0; border-radius: 8px; background: var(--panel); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Exercício AI-first: Phaser 3</h1>
+      <p class="sub">Cada aba é uma versão do jogo da memória.</p>
+      <nav id="tabs" role="tablist"></nav>
+    </header>
+    <main>
+      <p class="info" id="info"></p>
+      <iframe id="frame" title="Versão do jogo"></iframe>
+    </main>
+
+    <script>
+      // Para adicionar a V2: crie versions/v2-.../ e acrescente uma linha aqui.
+      // "path" é o nome da pasta em versions/. Use ready: false para uma aba desativada.
+      const VERSIONS = [
+        { label: 'V1 · Básica', path: 'v1-memoria', ready: true,
+          info: 'Grade 4x4, cartas geradas por código, flip com tweens, contador de jogadas.' },
+        { label: 'V2 · Em breve', path: '', ready: false, info: '' },
+      ];
+
+      const tabs = document.getElementById('tabs');
+      const frame = document.getElementById('frame');
+      const info = document.getElementById('info');
+
+      function select(index) {
+        const v = VERSIONS[index];
+        frame.src = `./${v.path}/`;
+        info.textContent = v.info;
+        tabs.querySelectorAll('button').forEach((b, i) =>
+          b.setAttribute('aria-selected', String(i === index)));
+        history.replaceState(null, '', `#${v.path}`);
+      }
+
+      VERSIONS.forEach((v, i) => {
+        const b = document.createElement('button');
+        b.role = 'tab';
+        b.textContent = v.label;
+        b.disabled = !v.ready;
+        b.onclick = () => select(i);
+        tabs.appendChild(b);
+      });
+
+      const fromHash = VERSIONS.findIndex(v => v.ready && `#${v.path}` === location.hash);
+      select(fromHash >= 0 ? fromHash : 0);
+    </script>
+  </body>
+</html>
